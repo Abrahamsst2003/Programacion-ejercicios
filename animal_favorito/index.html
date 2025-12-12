@@ -4,63 +4,77 @@
     <meta charset="UTF-8">
     <title>Animal Favorito - Solicitud</title>
     <style>
-        /* Estilos generales para el cuerpo de la página */
+        /* ===================== */
+        /* === ESTILOS BASE === */
+        /* ===================== */
+        :root {
+            /* Variables CSS por defecto (Modo Claro) */
+            --color-fondo-pagina: #f4f4f9;
+            --color-fondo-tarjeta: #ffffff;
+            --color-texto-principal: #333;
+            --color-titulo: #0056b3;
+            --color-borde: #ccc;
+            --color-sombra: rgba(0, 0, 0, 0.1);
+        }
+
+        /* ===================== */
+        /* === ESTILOS MODO OSCURO (Dark Mode) === */
+        /* ===================== */
+        .dark-mode {
+            /* Nuevos valores para las variables cuando el <body> tiene la clase 'dark-mode' */
+            --color-fondo-pagina: #1a1a2e; /* Azul oscuro profundo */
+            --color-fondo-tarjeta: #2c2c47; /* Púrpura oscuro */
+            --color-texto-principal: #e0e0e0; /* Texto claro */
+            --color-titulo: #8aa8ff; /* Azul claro */
+            --color-borde: #555;
+            --color-sombra: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Aplicar las variables a los elementos */
         body {
-            font-family: 'Arial', sans-serif; /* Fuente más legible */
-            background-color: #f4f4f9; /* Fondo muy claro y suave */
-            color: #333; /* Color de texto oscuro */
-            margin: 0; /* Elimina el margen predeterminado del body */
-            padding: 50px; /* Relleno alrededor del contenido principal */
-            display: flex; /* Para centrar el contenido */
+            font-family: 'Arial', sans-serif;
+            background-color: var(--color-fondo-pagina); /* Usa la variable */
+            color: var(--color-texto-principal); /* Usa la variable */
+            margin: 0;
+            padding: 50px;
+            display: flex;
             justify-content: center;
-            align-items: flex-start; /* Alineación al inicio verticalmente */
-            min-height: 100vh; /* Ocupa al menos el 100% de la altura de la vista */
+            align-items: flex-start;
+            min-height: 100vh;
+            transition: background-color 0.5s, color 0.5s; /* Transición suave */
         }
 
-        /* Estilo para el contenedor principal */
         .container {
-            background-color: #ffffff; /* Fondo blanco para el formulario */
+            background-color: var(--color-fondo-tarjeta); /* Usa la variable */
             padding: 30px 40px;
-            border-radius: 10px; /* Bordes redondeados */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave para darle profundidad */
+            border-radius: 10px;
+            box-shadow: 0 4px 12px var(--color-sombra); /* Usa la variable */
             width: 100%;
-            max-width: 400px; /* Ancho máximo para que no se extienda demasiado */
+            max-width: 400px;
+            transition: background-color 0.5s, box-shadow 0.5s;
         }
 
-        /* Estilo para el título */
         h1 {
-            color: #0056b3; /* Un color azul llamativo para el título */
+            color: var(--color-titulo); /* Usa la variable */
             text-align: center;
             margin-bottom: 30px;
-        }
-
-        /* Estilo para la etiqueta y el campo de texto */
-        label {
-            display: block; /* Para que la etiqueta ocupe su propia línea */
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
         }
 
         input[type="text"] {
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--color-borde);
             border-radius: 5px;
-            box-sizing: border-box; /* Asegura que el padding no aumente el ancho total */
+            box-sizing: border-box;
             font-size: 16px;
-            transition: border-color 0.3s; /* Transición suave al enfocar */
+            background-color: inherit; /* Hereda el color de fondo para el modo oscuro */
+            color: var(--color-texto-principal); /* Asegura que el texto dentro del input cambie */
         }
-
-        input[type="text"]:focus {
-            border-color: #007bff; /* Borde azul al enfocar */
-            outline: none; /* Quita el contorno por defecto del navegador */
-        }
-
-        /* Estilo para el botón */
+        
+        /* Estilos del botón de envío (mantienen el color fijo, es común) */
         button[type="submit"] {
-            background-color: #28a745; /* Color verde vibrante */
+            background-color: #28a745;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -68,16 +82,29 @@
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
-            width: 100%; /* El botón ocupa todo el ancho */
-            transition: background-color 0.3s ease; /* Transición suave al pasar el ratón */
+            width: 100%;
         }
 
-        button[type="submit"]:hover {
-            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+        /* Estilo para el botón de cambio de modo */
+        #mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background-color: #5a5a5a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 1000;
         }
+
     </style>
 </head>
-<body>
+<body id="body">
+    <button id="mode-toggle">Cambiar a Noche</button>
+
     <div class="container">
         <h1>¿Cuál es tu animal favorito?</h1>
         <form action="/submit-animal" method="POST">
@@ -86,5 +113,42 @@
             <button type="submit">Enviar</button>
         </form>
     </div>
+
+    <script>
+        // === LÓGICA DE JAVASCRIPT PARA EL MODO OSCURO ===
+        const body = document.getElementById('body');
+        const toggleButton = document.getElementById('mode-toggle');
+        const localStorageKey = 'themePreference';
+
+        // 1. Cargar la preferencia guardada al inicio
+        const savedTheme = localStorage.getItem(localStorageKey);
+
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            toggleButton.textContent = 'Cambiar a Día';
+        } else {
+             // Si no hay preferencia o es 'light', no se hace nada (se queda en modo día)
+             toggleButton.textContent = 'Cambiar a Noche';
+        }
+
+        // 2. Función para cambiar el modo y guardar la preferencia
+        function toggleTheme() {
+            // Verifica si tiene la clase 'dark-mode'
+            const isDarkMode = body.classList.toggle('dark-mode');
+
+            if (isDarkMode) {
+                // Si ahora está en modo oscuro
+                localStorage.setItem(localStorageKey, 'dark');
+                toggleButton.textContent = 'Cambiar a Día';
+            } else {
+                // Si ahora está en modo claro
+                localStorage.setItem(localStorageKey, 'light');
+                toggleButton.textContent = 'Cambiar a Noche';
+            }
+        }
+
+        // 3. Asignar el evento al botón
+        toggleButton.addEventListener('click', toggleTheme);
+    </script>
 </body>
 </html>
