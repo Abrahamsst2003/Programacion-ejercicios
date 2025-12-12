@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Animal Favorito - Solicitud</title>
+    <style>
+        /* Estilos generales para el cuerpo de la página */
+        body {
+            font-family: 'Arial', sans-serif; /* Fuente más legible */
+            background-color: #f4f4f9; /* Fondo muy claro y suave */
+            color: #333; /* Color de texto oscuro */
+            margin: 0; /* Elimina el margen predeterminado del body */
+            padding: 50px; /* Relleno alrededor del contenido principal */
+            display: flex; /* Para centrar el contenido */
+            justify-content: center;
+            align-items: flex-start; /* Alineación al inicio verticalmente */
+            min-height: 100vh; /* Ocupa al menos el 100% de la altura de la vista */
+        }
+
+        /* Estilo para el contenedor principal */
+        .container {
+            background-color: #ffffff; /* Fondo blanco para el formulario */
+            padding: 30px 40px;
+            border-radius: 10px; /* Bordes redondeados */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave para darle profundidad */
+            width: 100%;
+            max-width: 400px; /* Ancho máximo para que no se extienda demasiado */
+        }
+
+        /* Estilo para el título */
+        h1 {
+            color: #0056b3; /* Un color azul llamativo para el título */
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Estilo para la etiqueta y el campo de texto */
+        label {
+            display: block; /* Para que la etiqueta ocupe su propia línea */
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Asegura que el padding no aumente el ancho total */
+            font-size: 16px;
+            transition: border-color 0.3s; /* Transición suave al enfocar */
+        }
+
+        input[type="text"]:focus {
+            border-color: #007bff; /* Borde azul al enfocar */
+            outline: none; /* Quita el contorno por defecto del navegador */
+        }
+
+        /* Estilo para el botón */
+        button[type="submit"] {
+            background-color: #28a745; /* Color verde vibrante */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%; /* El botón ocupa todo el ancho */
+            transition: background-color 0.3s ease; /* Transición suave al pasar el ratón */
+        }
+
+        button[type="submit"]:hover {
+            background-color: #218838; /* Color verde más oscuro al pasar el ratón */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>¿Cuál es tu animal favorito?</h1>
+        <form action="/submit-animal" method="POST">
+            <label for="animal">Nombre del animal:</label>
+            <input type="text" id="animal" name="animal" required>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+</body>
+</html>
