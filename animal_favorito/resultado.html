@@ -4,61 +4,90 @@
     <meta charset="UTF-8">
     <title>Resultado</title>
     <style>
-        /* Estilos generales para el cuerpo de la página */
+        /* ===================== */
+        /* === VARIABLES CSS (Modo Claro por defecto) === */
+        /* ===================== */
+        :root {
+            --color-fondo-pagina: #f4f4f9;
+            --color-fondo-tarjeta: #ffffff;
+            --color-texto-principal: #333;
+            --color-titulo: #0056b3;
+            --color-texto-secundario: #555;
+            --color-sombra: rgba(0, 0, 0, 0.1);
+            --color-resaltado: #ff9800; /* Naranja para el nombre del animal */
+        }
+
+        /* ===================== */
+        /* === ESTILOS MODO OSCURO (Dark Mode) === */
+        /* ===================== */
+        .dark-mode {
+            --color-fondo-pagina: #1a1a2e; /* Fondo oscuro */
+            --color-fondo-tarjeta: #2c2c47; /* Tarjeta oscura */
+            --color-texto-principal: #e0e0e0; 
+            --color-titulo: #8aa8ff; /* Azul claro */
+            --color-texto-secundario: #a0a0a0;
+            --color-sombra: rgba(255, 255, 255, 0.1);
+            --color-resaltado: #ffd480; /* Naranja más claro para el contraste */
+        }
+
+        /* ===================== */
+        /* === ESTILOS GENERALES (usando variables) === */
+        /* ===================== */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9; /* Mismo fondo que el formulario */
-            color: #333;
+            background-color: var(--color-fondo-pagina);
+            color: var(--color-texto-principal);
             margin: 0;
             padding: 50px;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            text-align: center; /* Centra el texto dentro del body */
+            text-align: center;
+            transition: background-color 0.5s, color 0.5s; /* Transición suave */
         }
 
         /* Estilo para el contenedor principal de la tarjeta de resultado */
         .container {
-            background-color: #ffffff;
+            background-color: var(--color-fondo-tarjeta);
             padding: 40px 50px;
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px var(--color-sombra);
             width: 100%;
             max-width: 500px;
-            /* Flexbox para centrar el contenido verticalmente en la tarjeta */
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: background-color 0.5s, box-shadow 0.5s;
         }
 
         /* Estilo para el título principal */
         h1 {
-            color: #0056b3;
+            color: var(--color-titulo);
             font-size: 28px;
             margin-bottom: 20px;
         }
 
         /* Estilo para resaltar el nombre del animal */
         #animal_nombre {
-            color: #ff9800; /* Un color naranja brillante para el nombre */
+            color: var(--color-resaltado);
             font-weight: bold;
             font-style: italic;
-            text-transform: capitalize; /* La primera letra en mayúscula */
+            text-transform: capitalize;
         }
 
         /* Estilo para el párrafo de agradecimiento */
         p {
             font-size: 18px;
-            color: #555;
+            color: var(--color-texto-secundario);
             margin-bottom: 30px;
         }
 
-        /* Estilo para el enlace de "Volver al inicio" */
+        /* Estilo para el enlace de "Volver al inicio" (mismo color fijo para consistencia) */
         a {
-            display: inline-block; /* Permite aplicar padding y margin */
-            text-decoration: none; /* Quitar el subrayado predeterminado */
-            background-color: #28a745; /* Mismo verde que el botón de Enviar */
+            display: inline-block;
+            text-decoration: none;
+            background-color: #28a745;
             color: white;
             padding: 10px 25px;
             border-radius: 5px;
@@ -67,15 +96,70 @@
         }
 
         a:hover {
-            background-color: #218838; /* Color más oscuro al pasar el ratón */
+            background-color: #218838;
         }
+
+        /* Estilo para el botón de cambio de modo */
+        #mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background-color: #5a5a5a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            z-index: 1000;
+        }
+
     </style>
 </head>
-<body>
+<body id="body">
+    <button id="mode-toggle">Cambiar a Noche</button>
+
     <div class="container">
         <h1>¡Tu animal favorito es: <span id="animal_nombre">[ANIMAL_PLACEHOLDER]</span>!</h1>
         <p>Gracias por compartirlo con nosotros.</p>
         <a href="/">Volver al inicio</a>
     </div>
+
+    <script>
+        // === LÓGICA DE JAVASCRIPT PARA EL MODO OSCURO ===
+        const body = document.getElementById('body');
+        const toggleButton = document.getElementById('mode-toggle');
+        const localStorageKey = 'themePreference';
+
+        // 1. Cargar la preferencia guardada al inicio
+        const savedTheme = localStorage.getItem(localStorageKey);
+
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            toggleButton.textContent = 'Cambiar a Día';
+        } else {
+             // Si no hay preferencia o es 'light', no se hace nada (se queda en modo día)
+             toggleButton.textContent = 'Cambiar a Noche';
+        }
+
+        // 2. Función para cambiar el modo y guardar la preferencia
+        function toggleTheme() {
+            // Verifica si tiene la clase 'dark-mode'
+            const isDarkMode = body.classList.toggle('dark-mode');
+
+            if (isDarkMode) {
+                // Si ahora está en modo oscuro
+                localStorage.setItem(localStorageKey, 'dark');
+                toggleButton.textContent = 'Cambiar a Día';
+            } else {
+                // Si ahora está en modo claro
+                localStorage.setItem(localStorageKey, 'light');
+                toggleButton.textContent = 'Cambiar a Noche';
+            }
+        }
+
+        // 3. Asignar el evento al botón
+        toggleButton.addEventListener('click', toggleTheme);
+    </script>
 </body>
 </html>
